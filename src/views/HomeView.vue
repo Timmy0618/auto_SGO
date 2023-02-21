@@ -1,18 +1,34 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div>
+    <el-input v-model="token" placeholder="Please input">
+      <template #prepend>Token</template>
+    </el-input>
+    <div v-if="Object.keys(userObj).length > 0">
+      <ProfileView :userObj="userObj" />
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+<script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import ProfileView from "../components/ProfileView.vue";
+import user from "../api/user.js";
 
-@Options({
-  components: {
-    HelloWorld,
-  },
-})
-export default class HomeView extends Vue {}
+const token = ref(process.env.VUE_APP_TOKEN1);
+
+let userObj = ref({});
+
+const getProfile = () => {
+  userObj.value = new user(token.value);
+};
+
+onMounted(async () => {
+  await getProfile();
+});
 </script>
+
+<style>
+.input-with-select .el-input-group__prepend {
+  background-color: var(--el-fill-color-blank);
+}
+</style>
