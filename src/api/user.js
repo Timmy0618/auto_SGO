@@ -56,7 +56,28 @@ function user(inputToken) {
         }
       )
       .then((response) => {
-        let profile = response.data;
+        let profile = response.data.profile;
+        return profile;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  this.moveComplete = async function () {
+    return await axios
+      .post(
+        `${baseurl}/zone/move/complete`,
+        {},
+        {
+          headers: {
+            token: token,
+          },
+        }
+      )
+      .then((response) => {
+        let profile = response.data.profile;
         return profile;
       })
       .catch((error) => {
@@ -78,7 +99,7 @@ function user(inputToken) {
         }
       )
       .then((response) => {
-        let profile = response.data;
+        let profile = response.data.profile;
         return profile;
       })
       .catch((error) => {
@@ -100,7 +121,29 @@ function user(inputToken) {
         }
       )
       .then((response) => {
-        let profile = response.data;
+        let data = response.data;
+        return data;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  // 換地圖 0:城鎮 1:大草原 2:猛牛原 3:兒童樂園 4:蘑菇園 5:圓明園 6:非洲大草原
+  this.move = async function (id) {
+    return await axios
+      .post(
+        `${baseurl}/zone/move/${id}`,
+        {},
+        {
+          headers: {
+            token: token,
+          },
+        }
+      )
+      .then((response) => {
+        let profile = response.data.profile;
         return profile;
       })
       .catch((error) => {

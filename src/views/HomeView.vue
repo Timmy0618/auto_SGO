@@ -18,12 +18,12 @@ const token = ref(process.env.VUE_APP_TOKEN1);
 
 let userObj = ref({});
 
-const getProfile = () => {
+const setUser = () => {
   userObj.value = new user(token.value);
 };
 
 onMounted(async () => {
-  await getProfile();
+  setUser();
 });
 </script>
 
