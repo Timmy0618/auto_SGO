@@ -80,9 +80,9 @@ let setting = ref({
 });
 
 const emits = defineEmits(["set-profile"]);
-const setProfileInfo = (profileInfo) => {
+const setProfileInfo = async (profileInfo) => {
   emits("set-profile", profileInfo);
-  return;
+  return true;
 };
 
 const handleAutoBattle = async () => {
@@ -164,16 +164,15 @@ const checkStatus = async () => {
   switch (props.profile.actionStatus) {
     case "休息":
       if (actionTime() >= 10) {
-        setProfileInfo(await user.restComplete()).then(() => {
-          ElMessage("休息完成！");
-          if (props.profile.sp < props.profile.fullSp) {
-            ElMessage("體力沒滿繼續睡");
-            rest();
-            return false;
-          } else {
-            return true;
-          }
-        });
+        await setProfileInfo(await user.restComplete());
+        ElMessage("休息完成！");
+        if (props.profile.sp < props.profile.fullSp) {
+          ElMessage("體力沒滿繼續睡");
+          rest();
+          return false;
+        } else {
+          return true;
+        }
       }
       ElMessage("休息中！");
       return false;
