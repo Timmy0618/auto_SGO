@@ -1,16 +1,15 @@
 import axios from "axios";
 
 const baseurl = "https://api.swordgale.online/api";
-let token = "";
 
 function user(inputToken) {
-  token = inputToken;
+  this.token = inputToken;
 
   this.getProfile = async function () {
     return await axios
       .get(`${baseurl}/profile`, {
         headers: {
-          token: token,
+          token: this.token,
         },
       })
       .then((response) => {
@@ -30,7 +29,7 @@ function user(inputToken) {
         {},
         {
           headers: {
-            token: token,
+            token: this.token,
           },
         }
       )
@@ -51,7 +50,7 @@ function user(inputToken) {
         {},
         {
           headers: {
-            token: token,
+            token: this.token,
           },
         }
       )
@@ -72,7 +71,7 @@ function user(inputToken) {
         {},
         {
           headers: {
-            token: token,
+            token: this.token,
           },
         }
       )
@@ -93,7 +92,7 @@ function user(inputToken) {
         {},
         {
           headers: {
-            token: token,
+            token: this.token,
           },
           type: 2,
         }
@@ -115,7 +114,7 @@ function user(inputToken) {
         {},
         {
           headers: {
-            token: token,
+            token: this.token,
           },
           type: 1,
         }
@@ -138,7 +137,7 @@ function user(inputToken) {
         {},
         {
           headers: {
-            token: token,
+            token: this.token,
           },
         }
       )

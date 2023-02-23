@@ -1,11 +1,6 @@
 <template>
-  <div>
-    <el-input v-model="token" placeholder="Please input">
-      <template #prepend>Token</template>
-    </el-input>
-    <div v-if="Object.keys(userObj).length > 0">
-      <ProfileView :userObj="userObj" />
-    </div>
+  <div v-for="(userObj, index) in userAry" :key="index">
+    <ProfileView :userObj="userObj" />
   </div>
 </template>
 
@@ -14,16 +9,28 @@ import { ref, onMounted } from "vue";
 import ProfileView from "../components/ProfileView.vue";
 import user from "../api/user.js";
 
-const token = ref(process.env.VUE_APP_TOKEN1);
+const tokenAry = JSON.parse(process.env.VUE_APP_TOKENS);
+let userAry = ref([]);
 
-let userObj = ref({});
+const deepClone = (obj) => {
+  if (obj === null || typeof obj !== "object") {
+    return obj;
+  }
 
-const setUser = () => {
-  userObj.value = new user(token.value);
+  let clone = Object.assign({}, obj);
+
+  Object.keys(clone).forEach((key) => {
+    clone[key] = deepClone(clone[key]);
+  });
+
+  return clone;
 };
 
 onMounted(async () => {
-  setUser();
+  for (let index = 0; index < tokenAry.length; index++) {
+    userAry.value.push(deepClone(new user(tokenAry[index])));
+  }
+  console.log(userAry.value);
 });
 </script>
 
