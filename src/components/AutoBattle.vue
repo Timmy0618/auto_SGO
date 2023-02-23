@@ -11,7 +11,12 @@
         >
           <el-option v-for="(item, index) in map" :key="index" :value="item" />
         </el-select>
-        <el-button type="primary" @click="handleAutoBattle">自動戰鬥</el-button>
+        <el-button
+          type="primary"
+          @click="handleAutoBattle"
+          :disabled="!(scriptStatus == false && scriptDone == true)"
+          >自動戰鬥</el-button
+        >
         <el-button type="primary" @click="handleStop">停止</el-button>
         <p>執行狀態：{{ scriptStatus }}</p>
         <p>執行次數：{{ count }}</p>
@@ -62,6 +67,7 @@ const props = defineProps({
 });
 
 let scriptStatus = ref(false);
+let scriptDone = ref(true);
 let user = {};
 let battleInfo = ref({});
 const value = ref("");
@@ -82,6 +88,7 @@ const setProfileInfo = (profileInfo) => {
 const handleAutoBattle = async () => {
   scriptStatus.value = true;
   while (scriptStatus.value) {
+    scriptDone.value = false;
     if (!(await checkSetting())) {
       console.log("waiting");
     } else {
@@ -89,10 +96,11 @@ const handleAutoBattle = async () => {
       count.value += 1;
     }
     await sleep(11000);
+    scriptDone.value = true;
   }
 };
 
-const handleStop = () => {
+const handleStop = async () => {
   scriptStatus.value = false;
 };
 
