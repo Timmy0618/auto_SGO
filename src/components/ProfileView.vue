@@ -99,7 +99,7 @@ const dateDiff = computed(() => {
 onMounted(async () => {
   user = props.userObj;
   getProfile();
-  // getInterval();
+  getInterval();
 });
 </script>
 
