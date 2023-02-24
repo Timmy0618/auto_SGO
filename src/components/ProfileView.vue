@@ -94,7 +94,6 @@ const tokenError = ref(false);
 
 const setProfile = (profileInfo) => {
   profile.value = profileInfo;
-  getProfile();
 };
 
 const handleRun = async () => {

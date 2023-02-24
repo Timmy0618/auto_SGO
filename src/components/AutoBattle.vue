@@ -113,7 +113,6 @@ const toggleBattleInfo = () => {
 const emits = defineEmits(["set-profile"]);
 const setProfileInfo = async (profileInfo) => {
   emits("set-profile", profileInfo);
-  return true;
 };
 
 const handleAutoBattle = async () => {
