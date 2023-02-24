@@ -15,7 +15,7 @@
             closable
             @close="handleDelete(index)"
           >
-            {{ str.slice(0, 10) }}
+            {{ str.slice(str.length - 10, str.length) }}
           </el-tag>
         </el-form-item>
       </el-form>
