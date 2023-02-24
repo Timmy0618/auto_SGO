@@ -2,7 +2,7 @@
   <div>
     <h1>Auto Battle</h1>
     <el-row style="margin-bottom: 20px" :gutter="20">
-      <el-col>
+      <el-col :span="8">
         <el-select
           v-model="setting.map"
           class="m-2"
@@ -11,47 +11,72 @@
         >
           <el-option v-for="(item, index) in map" :key="index" :value="item" />
         </el-select>
+      </el-col>
+      <el-col :span="4">
         <el-button
           type="primary"
           @click="handleAutoBattle"
           :disabled="!(scriptStatus == false && scriptDone == true)"
           >自動戰鬥</el-button
         >
+      </el-col>
+      <el-col :span="4">
         <el-button type="primary" @click="handleStop">停止</el-button>
-        <p>執行狀態：{{ scriptStatus }}</p>
-        <p>執行次數：{{ count }}</p>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="8">
+        <el-form-item label="執行狀態：">{{ scriptStatus }}</el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item label="執行次數：">{{ count }}</el-form-item>
       </el-col>
     </el-row>
     <el-row style="margin-bottom: 20px" :gutter="20">
-      <el-col :span="6">
-        <el-input v-model="setting.hp" placeholder="血量" type="number">
+      <el-col :span="8">
+        <el-input
+          v-model="setting.hp"
+          placeholder="血量"
+          type="number"
+          size="large"
+        >
           <template #prepend>HP 極限</template>
         </el-input>
       </el-col>
-      <el-col :span="6">
-        <el-input v-model="setting.sp" placeholder="體力" type="number">
+      <el-col :span="8">
+        <el-input
+          v-model="setting.sp"
+          placeholder="體力"
+          type="number"
+          size="large"
+        >
           <template #prepend>SP 極限</template>
         </el-input>
       </el-col>
-      <el-col :span="6">
-        <el-input v-model="setting.mapLevel" placeholder="體力" type="number">
+      <el-col :span="8">
+        <el-input
+          v-model="setting.mapLevel"
+          placeholder="層數"
+          type="number"
+          size="large"
+        >
           <template #prepend>層數 極限</template>
         </el-input>
       </el-col>
     </el-row>
 
     <el-row>
-      <el-col>
-        {{ setting }}
-      </el-col>
-      <el-col>
-        <p v-for="(info, index) in battleInfo" :key="index">
-          {{ info.m }}
-        </p>
+      <el-col :span="24">
+        <el-button type="primary" @click="toggleBattleInfo">{{
+          showContent ? "隱藏戰鬥資訊" : "展開戰鬥資訊"
+        }}</el-button>
+        <el-col v-show="showContent">
+          <p v-for="(info, index) in battleInfo" :key="index">
+            {{ info.m }}
+          </p>
+        </el-col>
       </el-col>
     </el-row>
-
-    <el-row> </el-row>
   </div>
 </template>
 
@@ -78,6 +103,12 @@ let setting = ref({
   map: value,
   mapLevel: 1,
 });
+
+const showContent = ref(false);
+
+const toggleBattleInfo = () => {
+  showContent.value = !showContent.value;
+};
 
 const emits = defineEmits(["set-profile"]);
 const setProfileInfo = async (profileInfo) => {

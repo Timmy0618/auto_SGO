@@ -1,27 +1,65 @@
 <template>
   <div>
     <h1>Profile</h1>
-    <div>
-      <p>Name：{{ profile.nickname }}</p>
-      <p>HP：{{ profile.hp }}/{{ profile.fullHp }}</p>
-      <p>體力：{{ profile.sp }}/{{ profile.fullSp }}</p>
-      <p>Lv：{{ profile.lv }}</p>
-      <p>Exp：{{ profile.exp }}</p>
-      <p>Next Exp：{{ profile.nextExp }}</p>
-      <p>狀態：{{ profile.actionStatus }}</p>
-      <p>
-        開始時間：{{ moment(profile.actionStart).format("MM-DD HH:mm:ss") }} ({{
-          dateDiff
-        }})
-      </p>
-      <p>位置：{{ profile.zoneName }} {{ profile.huntStage }}</p>
-    </div>
-    <el-button type="primary" @click="handleBackTown">回城</el-button>
-    <el-button type="primary" @click="handleRun">趕路</el-button>
-    <el-button type="primary" @click="handleBattle">戰鬥</el-button>
-    <el-button type="primary" @click="handleRest">休息</el-button>
-    <el-button type="primary" @click="handleRestComplete">完成休息</el-button>
-    <el-button type="primary" @click="handleMoveComplete">完成移動</el-button>
+    <el-card>
+      <el-row>
+        <el-col :span="8">Name：</el-col>
+        <el-col :span="16">{{ profile.nickname }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">HP：</el-col>
+        <el-col :span="16">{{ profile.hp }}/{{ profile.fullHp }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">體力：</el-col>
+        <el-col :span="16">{{ profile.sp }}/{{ profile.fullSp }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">狀態：</el-col>
+        <el-col :span="16">{{ profile.actionStatus }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">位置：</el-col>
+        <el-col :span="16"
+          >{{ profile.zoneName }} {{ profile.huntStage }}</el-col
+        >
+      </el-row>
+      <el-row v-show="showDetails">
+        <el-col :span="8">Lv：</el-col>
+        <el-col :span="16">{{ profile.lv }}</el-col>
+      </el-row>
+      <el-row v-show="showDetails">
+        <el-col :span="8">Exp：</el-col>
+        <el-col :span="16">{{ profile.exp }}/{{ profile.nextExp }}</el-col>
+      </el-row>
+
+      <el-row v-show="showDetails">
+        <el-col :span="8">開始時間：</el-col>
+        <el-col :span="16"
+          >{{ moment(profile.actionStart).format("MM-DD HH:mm:ss") }} ({{
+            dateDiff
+          }})</el-col
+        >
+      </el-row>
+      <el-row v-show="showDetails">
+        <el-col :span="8">操作：</el-col>
+        <el-col :span="16">
+          <el-button type="primary" @click="handleBackTown">回城</el-button>
+          <el-button type="primary" @click="handleRun">趕路</el-button>
+          <el-button type="primary" @click="handleBattle">戰鬥</el-button>
+          <el-button type="primary" @click="handleRest">休息</el-button>
+          <el-button type="primary" @click="handleRestComplete"
+            >完成休息</el-button
+          >
+          <el-button type="primary" @click="handleMoveComplete"
+            >完成移動</el-button
+          >
+        </el-col>
+      </el-row>
+    </el-card>
+    <el-button type="primary" size="small" @click="showDetails = !showDetails">
+      {{ showDetails ? "隱藏" : "顯示詳情" }}
+    </el-button>
   </div>
 
   <div>
@@ -44,6 +82,7 @@ const props = defineProps({
 
 let user = {};
 let profile = ref({});
+const showDetails = ref(false);
 
 const setProfile = (profileInfo) => {
   profile.value = profileInfo;

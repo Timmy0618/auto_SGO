@@ -1,7 +1,12 @@
 <template>
-  <div v-for="(userObj, index) in userAry" :key="index">
-    <ProfileView :userObj="userObj" />
-  </div>
+  <el-row :gutter="20">
+    <el-col v-for="(userObj, index) in userAry" :key="index" :span="12">
+      <el-card :body-style="{ padding: '20px' }">
+        <ProfileView :userObj="userObj" />
+      </el-card>
+      <el-divider />
+    </el-col>
+  </el-row>
 </template>
 
 <script lang="ts" setup>
