@@ -150,6 +150,27 @@ function user(inputToken) {
         return error;
       });
   };
+
+  this.revive = async function (id) {
+    return await axios
+      .post(
+        `${baseurl}/action/revive`,
+        {},
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let profile = response.data;
+        return profile;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
 }
 
 export default user;

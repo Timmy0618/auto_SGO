@@ -156,6 +156,12 @@ const checkSetting = async () => {
 };
 
 const checkHpSp = async () => {
+  if (props.profile.hp <= 0) {
+    ElMessage("你死了廢物！");
+    await revive();
+    return false;
+  }
+
   if (
     props.profile.hp <= setting.value.hp ||
     props.profile.sp <= setting.value.sp
@@ -165,6 +171,11 @@ const checkHpSp = async () => {
     return false;
   }
   return true;
+};
+
+const revive = async () => {
+  await user.revive();
+  ElMessage("死者甦醒之術！");
 };
 
 const checkMap = async () => {
@@ -214,6 +225,15 @@ const checkStatus = async () => {
         return true;
       }
       ElMessage(`移動中！(耗時：${actionTime()})分`);
+      return false;
+
+    case "重生":
+      if (actionTime() >= 10) {
+        setProfileInfo(await user.restComplete());
+        ElMessage("復活！");
+        return true;
+      }
+      ElMessage(`甦醒中！(耗時：${actionTime()})分`);
       return false;
 
     default:
