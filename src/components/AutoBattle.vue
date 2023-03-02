@@ -243,8 +243,10 @@ const checkSetting = async () => {
         else return false;
       })
       .then((isMapValid) => {
-        if (isMapValid && weaponCheckTag) return checkWeapon();
-        else return false;
+        if (isMapValid) {
+          if (!weaponCheckTag) return true;
+          else return checkWeapon();
+        } else return false;
       })
       .catch((error) => {
         console.error(error);
