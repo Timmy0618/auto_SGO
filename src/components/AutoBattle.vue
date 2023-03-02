@@ -32,6 +32,7 @@
         <el-form-item label="執行次數：">{{ count }}</el-form-item>
       </el-col>
     </el-row>
+
     <el-row style="margin-bottom: 20px" :gutter="20">
       <el-col :span="8">
         <el-input
@@ -63,6 +64,31 @@
           <template #prepend>層數 極限</template>
         </el-input>
       </el-col>
+
+      <el-col :span="8">
+        <el-input
+          v-model="setting.weaponDuration"
+          placeholder="武器耐久"
+          type="number"
+          size="large"
+        >
+          <template #prepend>武器 耐久</template>
+        </el-input>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      {{ equippedWeapon }}
+    </el-row>
+
+    <el-row>
+      {{ selectWeaponList }}
+      <WeaponSelect
+        :input-weapons="weaponList"
+        :input-checked-weapons="selectWeaponList"
+        @weapon-check="weaponCheck"
+        @select-weapon="selectWeapons"
+      />
     </el-row>
 
     <el-row>
@@ -81,9 +107,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, defineProps, defineEmits } from "vue";
+import { ref, onMounted, defineProps, defineEmits, computed } from "vue";
 import map from "../common/mapping";
 import { ElMessage } from "element-plus";
+import WeaponSelect from "./WeaponSelect.vue";
 import moment from "moment";
 
 const props = defineProps({
@@ -101,8 +128,77 @@ let setting = ref({
   hp: 100,
   sp: 150,
   map: value,
+  weaponDuration: 20,
   mapLevel: 1,
 });
+const weaponList = ref([]);
+const selectWeaponList = ref([]);
+let weaponCheckTag = false;
+
+const setWeapon = async () => {
+  let items = await user.item();
+  weaponList.value = items.equipments;
+};
+
+const equippedWeapon = computed(() => {
+  return weaponList.value
+    .filter((weapon) => weapon.status == "已裝備")
+    .map((weapon) => {
+      const { id, name, durability, fullDurability } = weapon;
+      return { id, name, durability, fullDurability };
+    });
+});
+
+const getEquippedWeapon = async () => {
+  return weaponList.value
+    .filter((weapon) => weapon.status == "已裝備")
+    .map((weapon) => {
+      const { id, name, durability, fullDurability } = weapon;
+      return { id, name, durability, fullDurability };
+    });
+};
+
+const selectWeapons = (weapons) => {
+  selectWeaponList.value = weapons;
+};
+
+const wearWeapon = async (id: number) => {
+  weaponList.value = await user.equip(id);
+};
+
+const checkWeapon = async () => {
+  let equipped = await getEquippedWeapon();
+
+  if (!equipped[0] || equipped[0].durability < setting.value.weaponDuration) {
+    ElMessage("換武器！");
+    // 選耐久夠的武器
+    let weaponCanBeSelect = weaponList.value.filter((weapon) => {
+      return (
+        selectWeaponList.value.includes(weapon.id) &&
+        weapon.durability >= setting.value.weaponDuration
+      );
+    });
+
+    if (weaponCanBeSelect.length == 0) {
+      ElMessage("沒武器！");
+      return false;
+    }
+
+    await wearWeapon(weaponCanBeSelect[0].id);
+    ElMessage(`穿上${weaponCanBeSelect[0].name}`);
+
+    // 同步子元件選擇
+    selectWeaponList.value = weaponCanBeSelect.map((weapon) => weapon.id);
+
+    return true;
+  }
+
+  return true;
+};
+
+const weaponCheck = () => {
+  weaponCheckTag = !weaponCheckTag;
+};
 
 const showContent = ref(false);
 
@@ -144,6 +240,10 @@ const checkSetting = async () => {
       })
       .then((isHpSpValid) => {
         if (isHpSpValid) return checkMap();
+        else return false;
+      })
+      .then((isMapValid) => {
+        if (isMapValid && weaponCheckTag) return checkWeapon();
         else return false;
       })
       .catch((error) => {
@@ -251,6 +351,7 @@ const battle = async () => {
   ElMessage("戰鬥");
   let data = await user.battle();
   setProfileInfo(data.profile);
+  setWeapon();
   battleInfo.value = data.messages;
 };
 
@@ -265,6 +366,7 @@ const actionTime = () => {
 
 onMounted(async () => {
   user = props.userObj;
+  setWeapon();
 });
 </script>
 
