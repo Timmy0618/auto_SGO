@@ -78,11 +78,25 @@
     </el-row>
 
     <el-row>
-      {{ equippedWeapon }}
+      <el-col :span="12">
+        <h3>裝備中</h3>
+        <ul>
+          <li v-for="item in equippedWeapon" :key="item.id">
+            {{ item.name }}({{ item.durability }}/{{ item.fullDurability }})
+          </li>
+        </ul>
+      </el-col>
+      <el-col :span="12">
+        <h3>待裝備</h3>
+        <ul>
+          <li v-for="itemId in selectWeaponList" :key="itemId">
+            {{ itemName(itemId) }}
+          </li>
+        </ul>
+      </el-col>
     </el-row>
-
+    <el-divider></el-divider>
     <el-row>
-      {{ selectWeaponList }}
       <WeaponSelect
         :input-weapons="weaponList"
         @weapon-check="weaponCheck"
@@ -147,6 +161,12 @@ const equippedWeapon = computed(() => {
       return { id, name, durability, fullDurability };
     });
 });
+
+const itemName = (itemId) => {
+  let weapon = weaponList.value.find((weapon) => weapon.id === itemId);
+
+  return weapon.name ?? itemId;
+};
 
 const getEquippedWeapon = async () => {
   return weaponList.value
