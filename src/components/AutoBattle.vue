@@ -77,24 +77,31 @@
       </el-col>
     </el-row>
 
-    <el-row>
-      <el-col :span="12">
-        <h3>裝備中</h3>
-        <ul>
-          <li v-for="item in equippedWeapon" :key="item.id">
-            {{ item.name }}({{ item.durability }}/{{ item.fullDurability }})
-          </li>
-        </ul>
-      </el-col>
-      <el-col :span="12">
-        <h3>待裝備</h3>
-        <ul>
-          <li v-for="itemId in selectWeaponList" :key="itemId">
-            {{ itemName(itemId) }}
-          </li>
-        </ul>
-      </el-col>
-    </el-row>
+    <el-card>
+      <el-row>
+        <el-col :span="12">
+          <div class="card-header">
+            <h3>裝備中</h3>
+          </div>
+          <ul class="card-content">
+            <li v-for="item in equippedWeapon" :key="item.id">
+              {{ item.name }}({{ item.durability }}/{{ item.fullDurability }})
+            </li>
+          </ul>
+        </el-col>
+        <el-col :span="12">
+          <div class="card-header">
+            <h3>待裝備</h3>
+          </div>
+          <ul class="card-content">
+            <li v-for="itemId in selectWeaponList" :key="itemId">
+              {{ itemName(itemId) }}
+            </li>
+          </ul>
+        </el-col>
+      </el-row>
+    </el-card>
+
     <el-divider></el-divider>
     <el-row>
       <WeaponSelect
@@ -146,7 +153,7 @@ let setting = ref({
 });
 const weaponList = ref([]);
 const selectWeaponList = ref([]);
-let weaponCheckTag = false;
+let weaponCheckTag = true;
 
 const setWeapon = async () => {
   let items = await user.item();
@@ -390,6 +397,19 @@ onMounted(async () => {
   setWeapon();
 });
 </script>
+
+<style>
+.card-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.card-content {
+  overflow-y: auto;
+  max-height: 100px;
+}
+</style>
 
 <export default>
     name: 'AutoBattle'

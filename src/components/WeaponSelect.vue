@@ -57,7 +57,7 @@ const props = defineProps({
 
 const isCollapse = ref(true);
 const searchText = ref("");
-const weaponCheck = ref(false);
+const weaponCheck = ref(true);
 const emits = defineEmits(["select-weapon", "un-equip-all", "weapon-check"]);
 const confirm = async () => {
   emits(
