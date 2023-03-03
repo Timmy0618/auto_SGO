@@ -47,12 +47,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits, computed, onMounted } from "vue";
+import { ref, defineProps, defineEmits, computed, watch } from "vue";
 
 const props = defineProps({
   userObj: Object,
   inputWeapons: Array,
-  inputWeaponCheck: Boolean,
   inputCheckedWeapons: Array,
 });
 
@@ -82,9 +81,12 @@ const filteredWeapons = computed(() => {
   );
 });
 
-onMounted(async () => {
-  weaponCheck.value = props.inputWeaponCheck;
-});
+watch(
+  () => props.inputWeapons,
+  () => {
+    filteredWeapons.value; // 強制觸發 getter 函數，使 computed 屬性重新計算
+  }
+);
 </script>
 
 <style scoped>

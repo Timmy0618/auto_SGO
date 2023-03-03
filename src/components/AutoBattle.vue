@@ -85,7 +85,6 @@
       {{ selectWeaponList }}
       <WeaponSelect
         :input-weapons="weaponList"
-        :input-checked-weapons="selectWeaponList"
         @weapon-check="weaponCheck"
         @select-weapon="selectWeapons"
       />
