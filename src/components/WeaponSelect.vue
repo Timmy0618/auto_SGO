@@ -58,6 +58,8 @@ const props = defineProps({
 const isCollapse = ref(true);
 const searchText = ref("");
 const weaponCheck = ref(true);
+const checkedWeapons = ref([]);
+
 const emits = defineEmits(["select-weapon", "un-equip-all", "weapon-check"]);
 const confirm = async () => {
   emits(
@@ -66,13 +68,12 @@ const confirm = async () => {
       return weapon.id;
     })
   );
+  checkedWeapons.value = [];
 };
 
 const handleWeaponCheck = () => {
   emits("weapon-check");
 };
-
-const checkedWeapons = ref([]);
 
 const filteredWeapons = computed(() => {
   const text = searchText.value.trim().toLowerCase();
