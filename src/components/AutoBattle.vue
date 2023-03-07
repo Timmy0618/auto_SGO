@@ -32,6 +32,7 @@
         <el-form-item label="執行次數：">{{ count }}</el-form-item>
       </el-col>
     </el-row>
+
     <el-row style="margin-bottom: 20px" :gutter="20">
       <el-col :span="8">
         <el-input
@@ -63,6 +64,51 @@
           <template #prepend>層數 極限</template>
         </el-input>
       </el-col>
+
+      <el-col :span="8">
+        <el-input
+          v-model="setting.weaponDuration"
+          placeholder="武器耐久"
+          type="number"
+          size="large"
+        >
+          <template #prepend>武器 耐久</template>
+        </el-input>
+      </el-col>
+    </el-row>
+
+    <el-card>
+      <el-row>
+        <el-col :span="12">
+          <div class="card-header">
+            <h3>裝備中</h3>
+          </div>
+          <ul class="card-content">
+            <li v-for="item in equippedWeapon" :key="item.id">
+              {{ item.name }}({{ item.durability }}/{{ item.fullDurability }})
+            </li>
+          </ul>
+        </el-col>
+        <el-col :span="12">
+          <div class="card-header">
+            <h3>待裝備</h3>
+          </div>
+          <ul class="card-content">
+            <li v-for="itemId in selectWeaponList" :key="itemId">
+              {{ itemName(itemId) }}
+            </li>
+          </ul>
+        </el-col>
+      </el-row>
+    </el-card>
+
+    <el-divider></el-divider>
+    <el-row>
+      <WeaponSelect
+        :input-weapons="weaponList"
+        @weapon-check="weaponCheck"
+        @select-weapon="selectWeapons"
+      />
     </el-row>
 
     <el-row>
@@ -81,10 +127,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, defineProps, defineEmits } from "vue";
+import { ref, onMounted, defineProps, defineEmits, computed } from "vue";
 import map from "../common/mapping";
 import { ElMessage } from "element-plus";
-import moment from "moment";
+import WeaponSelect from "./WeaponSelect.vue";
+import sleep from "../common/sleep";
+import checker from "../common/checker";
 
 const props = defineProps({
   userObj: Object,
@@ -101,8 +149,40 @@ let setting = ref({
   hp: 100,
   sp: 150,
   map: value,
+  weaponDuration: 20,
   mapLevel: 1,
 });
+const weaponList = ref([]);
+const selectWeaponList = ref([]);
+let weaponCheckTag = true;
+
+const setWeapon = async () => {
+  let items = await user.item();
+  weaponList.value = items.equipments;
+};
+
+const equippedWeapon = computed(() => {
+  return weaponList.value
+    .filter((weapon) => weapon.status == "已裝備")
+    .map((weapon) => {
+      const { id, name, durability, fullDurability } = weapon;
+      return { id, name, durability, fullDurability };
+    });
+});
+
+const itemName = (itemId) => {
+  let weapon = weaponList.value.find((weapon) => weapon.id === itemId);
+
+  return weapon.name ?? itemId;
+};
+
+const selectWeapons = (weapons) => {
+  selectWeaponList.value = weapons;
+};
+
+const weaponCheck = () => {
+  weaponCheckTag = !weaponCheckTag;
+};
 
 const showContent = ref(false);
 
@@ -119,7 +199,18 @@ const handleAutoBattle = async () => {
   scriptStatus.value = true;
   while (scriptStatus.value) {
     scriptDone.value = false;
-    if (!(await checkSetting())) {
+
+    if (
+      !(await new checker(
+        props.profile,
+        user,
+        setProfileInfo,
+        setting.value,
+        weaponCheckTag,
+        weaponList.value,
+        selectWeaponList.value
+      ).checkSetting())
+    ) {
       console.log("waiting");
     } else {
       await battle();
@@ -134,139 +225,32 @@ const handleStop = async () => {
   scriptStatus.value = false;
 };
 
-const checkSetting = async () => {
-  try {
-    console.log("checkSetting");
-    return checkStatus()
-      .then((isStatusValid) => {
-        if (isStatusValid) return checkHpSp();
-        else return false;
-      })
-      .then((isHpSpValid) => {
-        if (isHpSpValid) return checkMap();
-        else return false;
-      })
-      .catch((error) => {
-        console.error(error);
-        throw error;
-      });
-  } catch (error) {
-    alert(error);
-  }
-};
-
-const checkHpSp = async () => {
-  if (props.profile.hp <= 0) {
-    ElMessage("你死了廢物！");
-    await revive();
-    return false;
-  }
-
-  if (
-    props.profile.hp <= setting.value.hp ||
-    props.profile.sp <= setting.value.sp
-  ) {
-    ElMessage("體力血量不夠！");
-    await rest();
-    return false;
-  }
-  return true;
-};
-
-const revive = async () => {
-  await user.revive();
-  ElMessage("死者甦醒之術！");
-};
-
-const checkMap = async () => {
-  if (setting.value.map === "") {
-    ElMessage("請選地圖！");
-    return false;
-  }
-
-  if (props.profile.zoneName !== setting.value.map) {
-    ElMessage("地圖不對！");
-    setProfileInfo(await user.move(map.indexOf(setting.value.map)));
-    ElMessage("移動！");
-    return false;
-  }
-
-  if (props.profile.huntStage >= setting.value.mapLevel) {
-    ElMessage("層數超過！");
-    setProfileInfo(await user.move(0));
-    ElMessage("回城！");
-    return false;
-  }
-
-  return true;
-};
-
-const checkStatus = async () => {
-  switch (props.profile.actionStatus) {
-    case "休息":
-      if (actionTime() >= 10) {
-        await setProfileInfo(await user.restComplete());
-        ElMessage("休息完成！");
-        if (props.profile.sp < props.profile.fullSp) {
-          ElMessage("體力沒滿繼續睡");
-          rest();
-          return false;
-        } else {
-          return true;
-        }
-      }
-      ElMessage("休息中！");
-      return false;
-
-    case "移動":
-      if (actionTime() >= 5) {
-        setProfileInfo(await user.moveComplete());
-        ElMessage("移動完成！");
-        return true;
-      }
-      ElMessage(`移動中！(耗時：${actionTime()})分`);
-      return false;
-
-    case "重生":
-      if (actionTime() >= 10) {
-        setProfileInfo(await user.restComplete());
-        ElMessage("復活！");
-        return true;
-      }
-      ElMessage(`甦醒中！(耗時：${actionTime()})分`);
-      return false;
-
-    default:
-      ElMessage(props.profile.actionStatus);
-      return true;
-  }
-};
-
-const rest = async () => {
-  ElMessage("開始休息！");
-  setProfileInfo(await user.rest());
-};
-
 const battle = async () => {
   ElMessage("戰鬥");
   let data = await user.battle();
   setProfileInfo(data.profile);
+  setWeapon();
   battleInfo.value = data.messages;
-};
-
-const sleep = async (ms = 0) => {
-  return new Promise((r) => setTimeout(r, ms));
-};
-
-const actionTime = () => {
-  let diff = moment.duration(moment().diff(moment(props.profile.actionStart)));
-  return diff.minutes();
 };
 
 onMounted(async () => {
   user = props.userObj;
+  setWeapon();
 });
 </script>
+
+<style>
+.card-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.card-content {
+  overflow-y: auto;
+  max-height: 100px;
+}
+</style>
 
 <export default>
     name: 'AutoBattle'

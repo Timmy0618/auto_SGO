@@ -151,7 +151,7 @@ function user(inputToken) {
       });
   };
 
-  this.revive = async function (id) {
+  this.revive = async function () {
     return await axios
       .post(
         `${baseurl}/action/revive`,
@@ -164,6 +164,147 @@ function user(inputToken) {
       )
       .then((response) => {
         let profile = response.data;
+        return profile;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  this.equip = async function (id) {
+    return await axios
+      .post(
+        `${baseurl}/equipment/${id}/equip`,
+        {},
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let equipments = response.data.equipments;
+        return equipments;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  this.unEquip = async function (id) {
+    return await axios
+      .post(
+        `${baseurl}/equipment/${id}/unequip`,
+        {},
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let equipments = response.data.equipments;
+        return equipments;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  this.unEquipAll = async function () {
+    return await axios
+      .post(
+        `${baseurl}/equipment/unequipAll`,
+        {},
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let equipments = response.data.equipments ?? false;
+        return equipments;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  this.item = async function () {
+    return await axios
+      .get(`${baseurl}/items`, {
+        headers: {
+          token: this.token,
+        },
+      })
+      .then((response) => {
+        let items = response.data;
+        return items;
+      })
+      .catch((error) => {
+        console.log(error);
+        return false;
+      });
+  };
+
+  // { equipments:[], skills:[] }
+  this.huntInfo = async function () {
+    return await axios
+      .get(`${baseurl}/hunt/info`, {
+        headers: {
+          token: this.token,
+        },
+      })
+      .then((response) => {
+        let info = response.data;
+        return info;
+      })
+      .catch((error) => {
+        console.log(error);
+        return false;
+      });
+  };
+
+  // input {equipmentName: "", selected: [{id: , quantity: }], type: "dagger"}
+  this.forge = async function (name, selected, type) {
+    return await axios
+      .post(
+        `${baseurl}/forge`,
+        { equipmentName: name, selected: selected, type: type },
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let profile = response.data.profile;
+        return profile;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  this.forgeComplete = async function () {
+    return await axios
+      .post(
+        `${baseurl}/forge/complete`,
+        {},
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let profile = response.data.profile;
         return profile;
       })
       .catch((error) => {
