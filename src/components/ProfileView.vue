@@ -82,6 +82,7 @@
 import { ref, onMounted, defineProps, computed } from "vue";
 import AutoBattle from "../components/AutoBattle.vue";
 import moment from "moment";
+import sleep from "../common/sleep";
 
 const props = defineProps({
   userObj: Object,
@@ -125,10 +126,6 @@ const handleBackTown = async () => {
 const getProfile = async () => {
   profile.value = await user.getProfile();
   return profile.value;
-};
-
-const sleep = async (ms = 0) => {
-  return new Promise((r) => setTimeout(r, ms));
 };
 
 const getInterval = async () => {

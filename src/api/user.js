@@ -269,6 +269,49 @@ function user(inputToken) {
         return false;
       });
   };
+
+  // input {equipmentName: "", selected: [{id: , quantity: }], type: "dagger"}
+  this.forge = async function (name, selected, type) {
+    return await axios
+      .post(
+        `${baseurl}/forge`,
+        { equipmentName: name, selected: selected, type: type },
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let profile = response.data.profile;
+        return profile;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  this.forgeComplete = async function () {
+    return await axios
+      .post(
+        `${baseurl}/forge/complete`,
+        {},
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let profile = response.data.profile;
+        return profile;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
 }
 
 export default user;
