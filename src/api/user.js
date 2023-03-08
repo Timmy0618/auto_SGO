@@ -89,17 +89,18 @@ function user(inputToken) {
     return await axios
       .post(
         `${baseurl}/hunt`,
-        {},
+        {
+          type: 2,
+        },
         {
           headers: {
             token: this.token,
           },
-          type: 2,
         }
       )
       .then((response) => {
-        let profile = response.data.profile;
-        return profile;
+        let data = response.data;
+        return data;
       })
       .catch((error) => {
         console.log(error);
@@ -111,12 +112,13 @@ function user(inputToken) {
     return await axios
       .post(
         `${baseurl}/hunt`,
-        {},
+        {
+          type: 1,
+        },
         {
           headers: {
             token: this.token,
           },
-          type: 1,
         }
       )
       .then((response) => {

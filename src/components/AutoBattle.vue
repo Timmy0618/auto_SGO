@@ -54,6 +54,9 @@
           <template #prepend>SP 極限</template>
         </el-input>
       </el-col>
+    </el-row>
+
+    <el-row style="margin-bottom: 20px" :gutter="20">
       <el-col :span="8">
         <el-input
           v-model="setting.mapLevel"
@@ -62,6 +65,17 @@
           size="large"
         >
           <template #prepend>層數 極限</template>
+        </el-input>
+      </el-col>
+
+      <el-col :span="8">
+        <el-input
+          v-model="setting.runLevel"
+          placeholder="趕路層數"
+          type="number"
+          size="large"
+        >
+          <template #prepend>趕路 層數</template>
         </el-input>
       </el-col>
 
@@ -151,6 +165,7 @@ let setting = ref({
   map: value,
   weaponDuration: 20,
   mapLevel: 1,
+  runLevel: 0,
 });
 const weaponList = ref([]);
 const selectWeaponList = ref([]);
@@ -196,10 +211,13 @@ const setProfileInfo = async (profileInfo) => {
 };
 
 const handleAutoBattle = async () => {
+  if (!(await checkRunLevel())) {
+    return;
+  }
+
   scriptStatus.value = true;
   while (scriptStatus.value) {
     scriptDone.value = false;
-
     if (
       !(await new checker(
         props.profile,
@@ -213,7 +231,11 @@ const handleAutoBattle = async () => {
     ) {
       console.log("waiting");
     } else {
-      await battle();
+      if (props.profile.huntStage < setting.value.runLevel) {
+        await run();
+      } else {
+        await battle();
+      }
       count.value += 1;
     }
     await sleep(11000);
@@ -223,6 +245,26 @@ const handleAutoBattle = async () => {
 
 const handleStop = async () => {
   scriptStatus.value = false;
+};
+
+const checkRunLevel = async () => {
+  if (
+    setting.value.runLevel != 0 &&
+    setting.value.runLevel > setting.value.mapLevel
+  ) {
+    ElMessage("趕路 > 層數！");
+    return false;
+  }
+
+  return true;
+};
+
+const run = async () => {
+  ElMessage("趕路");
+  let data = await user.run();
+  setProfileInfo(data.profile);
+  setWeapon();
+  battleInfo.value = data.messages;
 };
 
 const battle = async () => {
