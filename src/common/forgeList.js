@@ -12,6 +12,10 @@ const forgeList = [
     type: "shield",
   },
   {
+    name: "細劍",
+    type: "rapier",
+  },
+  {
     name: "雙手斧",
     type: "axe",
   },
