@@ -271,24 +271,25 @@ function user(inputToken) {
   };
 
   // input {equipmentName: "", selected: [{id: , quantity: }], type: "dagger"}
-  this.forge = async function (name, selected, type) {
+  this.forge = async function (payload) {
     return await axios
-      .post(
-        `${baseurl}/forge`,
-        { equipmentName: name, selected: selected, type: type },
-        {
-          headers: {
-            token: this.token,
-          },
-        }
-      )
+      .post(`${baseurl}/forge`, payload, {
+        headers: {
+          token: this.token,
+        },
+      })
       .then((response) => {
-        let profile = response.data.profile;
-        return profile;
+        console.log(response);
+        if (response.status == 200) {
+          let profile = response.data.profile;
+          return profile;
+        } else {
+          return false;
+        }
       })
       .catch((error) => {
         console.log(error);
-        return error;
+        return false;
       });
   };
 
