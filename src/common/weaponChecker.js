@@ -17,7 +17,7 @@ class checkWeapon {
       let weaponCanBeSelect = this.weaponList.filter((weapon) => {
         return (
           this.selectWeaponList.includes(weapon.id) &&
-          weapon.durability >= this.setting.value.weaponDuration
+          weapon.durability >= this.setting.weaponDuration
         );
       });
 

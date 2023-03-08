@@ -44,7 +44,7 @@ class statusCheck {
         return false;
 
       case "鍛造":
-        if (this.forgeTime() <= 0) {
+        if (this.forgeTime() < 0) {
           this.setProfileInfo(await this.user.forgeComplete());
           ElMessage("鍛造完成");
           return true;
@@ -72,7 +72,7 @@ class statusCheck {
     let diff = moment.duration(
       moment(this.profile.forgingCompletionTime).diff(moment())
     );
-    return diff.minutes();
+    return diff.seconds();
   };
 }
 
