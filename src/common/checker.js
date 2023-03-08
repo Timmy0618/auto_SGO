@@ -170,7 +170,7 @@ class checker {
 
   rest = async () => {
     ElMessage("開始休息！");
-    this.this.setProfileInfo(await this.user.rest());
+    this.setProfileInfo(await this.user.rest());
   };
 }
 
