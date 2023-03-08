@@ -218,17 +218,18 @@ const handleAutoBattle = async () => {
   scriptStatus.value = true;
   while (scriptStatus.value) {
     scriptDone.value = false;
-    if (
-      !(await new checker(
-        props.profile,
-        user,
-        setProfileInfo,
-        setting.value,
-        weaponCheckTag,
-        weaponList.value,
-        selectWeaponList.value
-      ).checkSetting())
-    ) {
+
+    const myChecker = new checker(
+      props.profile,
+      user,
+      setProfileInfo,
+      setting.value,
+      weaponCheckTag,
+      weaponList.value,
+      selectWeaponList.value
+    );
+
+    if (!(await myChecker.checkSetting())) {
       console.log("waiting");
     } else {
       if (props.profile.huntStage < setting.value.runLevel) {
@@ -238,6 +239,7 @@ const handleAutoBattle = async () => {
       }
       count.value += 1;
     }
+
     await sleep(11000);
     scriptDone.value = true;
   }

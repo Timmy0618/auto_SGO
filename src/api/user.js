@@ -134,15 +134,11 @@ function user(inputToken) {
   // 換地圖 0:城鎮 1:大草原 2:猛牛原 3:兒童樂園 4:蘑菇園 5:圓明園 6:非洲大草原
   this.move = async function (id) {
     return await axios
-      .post(
-        `${baseurl}/zone/move/${id}`,
-        {},
-        {
-          headers: {
-            token: this.token,
-          },
-        }
-      )
+      .post(`${baseurl}/zone/move/${id}`, {
+        headers: {
+          token: this.token,
+        },
+      })
       .then((response) => {
         let profile = response.data.profile;
         return profile;
