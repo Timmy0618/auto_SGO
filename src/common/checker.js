@@ -167,11 +167,6 @@ class checker {
 
     return true;
   };
-
-  rest = async () => {
-    ElMessage("開始休息！");
-    this.setProfileInfo(await this.user.rest());
-  };
 }
 
 export default checker;
