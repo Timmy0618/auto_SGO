@@ -68,19 +68,39 @@
       </el-button>
     </div>
 
-    <div>
-      <AutoBattle
-        :userObj="userObj"
-        :profile="profile"
-        @set-profile="setProfile"
-      />
-    </div>
+    <el-row style="margin-bottom: 20px">
+      <el-card>
+        <el-checkbox v-model="showAutoBattle">自動戰鬥</el-checkbox>
+        <el-checkbox v-model="showAutoForge">自動鍛造</el-checkbox>
+      </el-card>
+    </el-row>
+
+    <el-row style="margin-bottom: 20px" v-if="showAutoForge">
+      <el-card>
+        <AutoForge
+          :userObj="userObj"
+          :profile="profile"
+          @set-profile="setProfile"
+        />
+      </el-card>
+    </el-row>
+
+    <el-row style="margin-bottom: 20px" v-if="showAutoBattle">
+      <el-card>
+        <AutoBattle
+          :userObj="userObj"
+          :profile="profile"
+          @set-profile="setProfile"
+        />
+      </el-card>
+    </el-row>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, defineProps, computed } from "vue";
 import AutoBattle from "../components/AutoBattle.vue";
+import AutoForge from "../components/AutoForge.vue";
 import moment from "moment";
 import sleep from "../common/sleep";
 
@@ -92,6 +112,8 @@ let user = {};
 let profile = ref({});
 const showDetails = ref(false);
 const tokenError = ref(false);
+const showAutoBattle = ref(true);
+const showAutoForge = ref(false);
 
 const setProfile = (profileInfo) => {
   profile.value = profileInfo;

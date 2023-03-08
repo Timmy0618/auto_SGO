@@ -12,7 +12,7 @@
           <el-option v-for="(item, index) in map" :key="index" :value="item" />
         </el-select>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="8">
         <el-button
           type="primary"
           @click="handleAutoBattle"
