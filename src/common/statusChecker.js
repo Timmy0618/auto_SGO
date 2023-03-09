@@ -6,6 +6,7 @@ class statusCheck {
     this.profile = profile;
     this.setProfileInfo = setProfileInfo;
     this.user = user;
+    this.forgeStatus = true;
   }
 
   checkStatus = async () => {
@@ -47,9 +48,11 @@ class statusCheck {
         if (this.forgeTime() < 0) {
           this.setProfileInfo(await this.user.forgeComplete());
           ElMessage("鍛造完成");
+          this.forgeStatus = true;
           return true;
         }
         ElMessage(`鍛造中！(耗時：${this.actionTime()})分`);
+        this.forgeStatus = false;
         return false;
 
       default:
