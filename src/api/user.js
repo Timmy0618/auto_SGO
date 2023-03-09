@@ -281,7 +281,6 @@ function user(inputToken) {
         },
       })
       .then((response) => {
-        console.log(response);
         if (response.status == 200) {
           let profile = response.data.profile;
           return profile;
