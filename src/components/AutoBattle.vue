@@ -252,7 +252,7 @@ const handleStop = async () => {
 const checkRunLevel = async () => {
   if (
     setting.value.runLevel != 0 &&
-    setting.value.runLevel > setting.value.mapLevel
+    Number(setting.value.runLevel) > Number(setting.value.mapLevel)
   ) {
     ElMessage("趕路 > 層數！");
     return false;
