@@ -45,13 +45,23 @@
           @change="parseWeaponSelected"
         />
       </el-col>
-      {{ weaponPayload }}
+    </el-row>
+
+    <el-row>
+      <el-col>
+        <h3>鍛造素材</h3>
+        <ul class="card-content">
+          <li v-for="item in findItemNameById" :key="item.name">
+            {{ item.name }}* {{ item.quantity }}
+          </li>
+        </ul>
+      </el-col>
     </el-row>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from "vue";
+import { ref, defineProps, defineEmits, onMounted, watch, computed } from "vue";
 import forgeList from "../common/forgeList";
 import forgeChecker from "../common/forgeChecker";
 import { ElMessage } from "element-plus";
@@ -65,6 +75,7 @@ const weaponPayload = ref({
   selected: "",
   type: "",
 });
+let item = {};
 
 const emits = defineEmits(["set-profile"]);
 const setProfileInfo = async (profileInfo) => {
@@ -77,7 +88,17 @@ const props = defineProps({
 });
 
 const parseWeaponSelected = () => {
-  weaponPayload.value.selected = JSON.parse(forgeItems.value);
+  try {
+    if (!forgeItems.value) {
+      weaponPayload.value.selected = "";
+      return;
+    }
+    weaponPayload.value.selected = JSON.parse(forgeItems.value);
+  } catch (error) {
+    forgeItems.value = "";
+    weaponPayload.value.selected = "";
+    ElMessage("json 格式錯誤");
+  }
 };
 
 const handleAutoForge = async () => {
@@ -115,9 +136,37 @@ const forge = async () => {
   }
 };
 
+const findItemNameById = computed(() => {
+  const ary1 = weaponPayload.value.selected;
+  const ary2 = item.mines;
+  const ary3 = [];
+
+  for (let i = 0; i < ary1.length; i++) {
+    for (let j = 0; j < ary2.length; j++) {
+      if (ary1[i].id === ary2[j].id) {
+        ary3.push({ name: ary2[j].name, quantity: ary1[i].quantity });
+        break;
+      }
+    }
+  }
+
+  return ary3;
+});
+
 const handleStop = () => {
   scriptStatus.value = false;
 };
+
+onMounted(async () => {
+  item = await props.userObj.item();
+});
+
+watch(
+  () => weaponPayload.value.selected,
+  () => {
+    findItemNameById.value; // 強制觸發 getter 函數，使 computed 屬性重新計算
+  }
+);
 </script>
 
 <export default>
