@@ -164,7 +164,7 @@ let setting = ref({
   sp: 150,
   map: value,
   weaponDuration: 20,
-  mapLevel: 1,
+  mapLevel: 2,
   runLevel: 0,
 });
 const weaponList = ref([]);
