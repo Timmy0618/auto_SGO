@@ -76,7 +76,9 @@ class checker {
     switch (this.profile.actionStatus) {
       case "休息":
         if (this.actionTime() >= 10) {
-          await this.setProfileInfo(await this.user.restComplete());
+          let profile = await this.user.restComplete();
+          await this.setProfileInfo(profile);
+          this.profile = profile;
           ElMessage("休息完成！");
           if (this.profile.sp < this.profile.fullSp) {
             ElMessage("體力沒滿繼續睡");
@@ -91,7 +93,9 @@ class checker {
 
       case "移動":
         if (this.actionTime() >= 5) {
-          this.setProfileInfo(await this.user.moveComplete());
+          let profile = await this.user.moveComplete();
+          await this.setProfileInfo(profile);
+          this.profile = profile;
           ElMessage("移動完成！");
           return true;
         }
@@ -100,7 +104,9 @@ class checker {
 
       case "重生":
         if (this.actionTime() >= 10) {
-          this.setProfileInfo(await this.user.restComplete());
+          let profile = await this.user.restComplete();
+          await this.setProfileInfo(profile);
+          this.profile = profile;
           ElMessage("復活！");
           return true;
         }
@@ -109,7 +115,9 @@ class checker {
 
       case "鍛造":
         if (this.forgeTime() <= 0) {
-          this.setProfileInfo(await this.user.forgeComplete());
+          let profile = await this.user.forgeComplete();
+          await this.setProfileInfo(profile);
+          this.profile = profile;
           ElMessage("鍛造完成");
           return true;
         }
