@@ -153,6 +153,27 @@ function user(inputToken) {
       });
   };
 
+  this.path = async function (id) {
+    return await axios
+      .post(
+        `${baseurl}/path`,
+        { pathId: id },
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let profile = response.data.profile;
+        return profile;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
   this.revive = async function () {
     return await axios
       .post(

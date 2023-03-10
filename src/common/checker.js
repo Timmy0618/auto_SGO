@@ -1,5 +1,6 @@
 import moment from "moment";
 import map from "../common/mapping";
+import specialMap from "../common/specialMap";
 import { ElMessage } from "element-plus";
 import weaponChecker from "./weaponChecker";
 
@@ -159,9 +160,20 @@ class checker {
       return false;
     }
 
+    // 判斷是否到秘境
+    if (specialMap.includes(this.setting.map)) {
+      if (!(this.profile.zoneName == this.setting.map)) {
+        if (!(await this.checkSpecialMap())) {
+          return true;
+        }
+      }
+    }
+
     if (this.profile.zoneName !== this.setting.map) {
       ElMessage("地圖不對！");
-      this.setProfileInfo(await this.user.move(map.indexOf(this.setting.map)));
+      this.setProfileInfo(
+        await this.user.move(getMapIdByName(this.setting.map))
+      );
       ElMessage("移動！");
       return false;
     }
@@ -175,6 +187,40 @@ class checker {
 
     return true;
   };
+
+  checkSpecialMap = async () => {
+    switch (this.setting.map) {
+      case "草原秘境":
+        //還沒到秘境
+        if (this.profile.zoneName == "大草原") {
+          if (Number(this.profile.huntStage) == 16) {
+            let profile = await this.user.path(
+              getMapIdByName(this.setting.map)
+            );
+            this.setProfileInfo(profile);
+            this.profile = profile;
+            ElMessage("進入秘境！");
+            return true;
+          }
+
+          return false;
+        } else {
+          ElMessage("地圖不對！");
+          this.setProfileInfo(await this.user.move(getMapIdByName("大草原")));
+          ElMessage("移動！");
+          return false;
+        }
+
+      default:
+        break;
+    }
+    return;
+  };
+}
+
+function getMapIdByName(name) {
+  const found = map.find((item) => item.name === name);
+  return found ? found.id : null;
 }
 
 export default checker;
