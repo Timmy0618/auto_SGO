@@ -161,11 +161,12 @@ class checker {
     }
 
     // 判斷是否到秘境
-    if (specialMap.includes(this.setting.map)) {
-      if (!(this.profile.zoneName == this.setting.map)) {
-        if (!(await this.checkSpecialMap())) {
-          return true;
-        }
+    if (
+      specialMap.includes(this.setting.map) &&
+      this.profile.zoneName != this.setting.map
+    ) {
+      if (await this.checkSpecialMap()) {
+        return true;
       }
     }
 
@@ -202,13 +203,13 @@ class checker {
             ElMessage("進入秘境！");
             return true;
           }
-
-          return false;
+          return true;
         } else {
           ElMessage("地圖不對！");
           this.setProfileInfo(await this.user.move(getMapIdByName("大草原")));
           ElMessage("移動！");
-          return false;
+
+          return true;
         }
 
       default:
