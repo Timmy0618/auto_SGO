@@ -191,7 +191,7 @@ class checker {
 
   checkSpecialMap = async () => {
     switch (this.setting.map) {
-      case "草原秘境":
+      case "草原秘徑":
         //還沒到秘境
         if (this.profile.zoneName == "大草原") {
           if (Number(this.profile.huntStage) == 16) {
