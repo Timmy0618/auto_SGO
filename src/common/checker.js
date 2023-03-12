@@ -213,9 +213,8 @@ class checker {
         }
 
       default:
-        break;
+        return false;
     }
-    return;
   };
 }
 
