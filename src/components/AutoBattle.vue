@@ -9,7 +9,12 @@
           placeholder="Map"
           size="large"
         >
-          <el-option v-for="(item, index) in map" :key="index" :value="item" />
+          <el-option
+            v-for="(item, index) in map"
+            :key="index"
+            :label="item.name"
+            :value="item.name"
+          />
         </el-select>
       </el-col>
       <el-col :span="8">
