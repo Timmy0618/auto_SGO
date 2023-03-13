@@ -45,7 +45,7 @@ class statusCheck {
         return false;
 
       case "鍛造":
-        if (this.forgeTime() < 0) {
+        if (this.forgeTime() < -5) {
           this.setProfileInfo(await this.user.forgeComplete());
           ElMessage("鍛造完成");
           this.forgeStatus = true;
