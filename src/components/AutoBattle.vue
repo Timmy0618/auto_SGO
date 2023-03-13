@@ -231,27 +231,27 @@ const handleAutoBattle = async () => {
       props.userObj
     );
 
-    if (!(await myStatusChecker.checkStatus())) return;
+    if (await myStatusChecker.checkStatus()) {
+      const myAutoBattleChecker = new autoBattleChecker(
+        props.profile,
+        user,
+        setProfileInfo,
+        setting.value,
+        weaponCheckTag,
+        weaponList.value,
+        selectWeaponList.value
+      );
 
-    const myAutoBattleChecker = new autoBattleChecker(
-      props.profile,
-      user,
-      setProfileInfo,
-      setting.value,
-      weaponCheckTag,
-      weaponList.value,
-      selectWeaponList.value
-    );
-
-    if (!(await myAutoBattleChecker.checkSetting())) {
-      console.log("waiting");
-    } else {
-      if (props.profile.huntStage < setting.value.runLevel) {
-        await run();
+      if (!(await myAutoBattleChecker.checkSetting())) {
+        console.log("waiting");
       } else {
-        await battle();
+        if (props.profile.huntStage < setting.value.runLevel) {
+          await run();
+        } else {
+          await battle();
+        }
+        count.value += 1;
       }
-      count.value += 1;
     }
 
     await sleep(11000);

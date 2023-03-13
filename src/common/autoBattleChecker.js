@@ -1,4 +1,3 @@
-import statusChecker from "./statusChecker";
 import map from "../common/mapping";
 import specialMap from "../common/specialMap";
 import { ElMessage } from "element-plus";
@@ -88,6 +87,8 @@ class autoBattleChecker {
     ) {
       if (await this.checkSpecialMap()) {
         return true;
+      } else {
+        return false;
       }
     }
 
@@ -129,7 +130,7 @@ class autoBattleChecker {
           this.setProfileInfo(await this.user.move(getMapIdByName("大草原")));
           ElMessage("移動！");
 
-          return true;
+          return false;
         }
 
       default:
