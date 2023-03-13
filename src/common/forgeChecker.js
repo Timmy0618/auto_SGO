@@ -1,6 +1,6 @@
-import checker from "./statusChecker";
+import statusChecker from "./statusChecker";
 
-class forgeChecker extends checker {
+class forgeChecker extends statusChecker {
   constructor(profile, setProfileInfo, user) {
     super(profile, setProfileInfo, user);
   }

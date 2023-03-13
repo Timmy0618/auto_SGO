@@ -151,7 +151,8 @@ import map from "../common/mapping";
 import { ElMessage } from "element-plus";
 import WeaponSelect from "./WeaponSelect.vue";
 import sleep from "../common/sleep";
-import checker from "../common/checker";
+import statusChecker from "../common/statusChecker";
+import autoBattleChecker from "../common/autoBattleChecker";
 
 const props = defineProps({
   userObj: Object,
@@ -224,25 +225,33 @@ const handleAutoBattle = async () => {
   while (scriptStatus.value) {
     scriptDone.value = false;
 
-    const myChecker = new checker(
+    const myStatusChecker = new statusChecker(
       props.profile,
-      user,
       setProfileInfo,
-      setting.value,
-      weaponCheckTag,
-      weaponList.value,
-      selectWeaponList.value
+      props.userObj
     );
 
-    if (!(await myChecker.checkSetting())) {
-      console.log("waiting");
-    } else {
-      if (props.profile.huntStage < setting.value.runLevel) {
-        await run();
+    if (await myStatusChecker.checkStatus()) {
+      const myAutoBattleChecker = new autoBattleChecker(
+        props.profile,
+        user,
+        setProfileInfo,
+        setting.value,
+        weaponCheckTag,
+        weaponList.value,
+        selectWeaponList.value
+      );
+
+      if (!(await myAutoBattleChecker.checkSetting())) {
+        console.log("waiting");
       } else {
-        await battle();
+        if (props.profile.huntStage < setting.value.runLevel) {
+          await run();
+        } else {
+          await battle();
+        }
+        count.value += 1;
       }
-      count.value += 1;
     }
 
     await sleep(11000);
