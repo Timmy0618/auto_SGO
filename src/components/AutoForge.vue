@@ -209,9 +209,14 @@ watch(
 </export>
 
 <style scoped>
-.card-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.card-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.card-content {
+  overflow-y: auto;
+  max-height: 200px;
 }
 </style>
