@@ -1,6 +1,6 @@
 import { ElMessage } from "element-plus";
 
-class checkWeapon {
+class weaponChecker {
   constructor(setting, weaponList, selectWeaponList, user) {
     this.setting = setting;
     this.weaponList = weaponList;
@@ -13,6 +13,12 @@ class checkWeapon {
 
     if (!equipped[0] || equipped[0].durability < this.setting.weaponDuration) {
       ElMessage("換武器！");
+
+      if (!this.weaponList || this.weaponList.length == 0) {
+        ElMessage("沒武器！");
+        return false;
+      }
+
       // 選耐久夠的武器
       let weaponCanBeSelect = this.weaponList.filter((weapon) => {
         return (
@@ -29,7 +35,6 @@ class checkWeapon {
       await this.wearWeapon(weaponCanBeSelect[0].id);
       ElMessage(`穿上${weaponCanBeSelect[0].name}`);
 
-      // 同步子元件選擇
       this.selectWeaponList = weaponCanBeSelect.map((weapon) => weapon.id);
 
       return true;
@@ -51,4 +56,4 @@ class checkWeapon {
     this.weaponList = await this.user.equip(id);
   };
 }
-export default checkWeapon;
+export default weaponChecker;
