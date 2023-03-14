@@ -77,7 +77,7 @@
     </el-row>
 
     <el-row style="margin-bottom: 20px" v-if="showAutoForge">
-      <el-card>
+      <el-card style="width: 600px">
         <AutoForge
           :userObj="userObj"
           :profile="profile"
@@ -97,7 +97,7 @@
     </el-row>
 
     <el-row style="margin-bottom: 20px" v-if="showAutoRecycle">
-      <el-card>
+      <el-card style="width: 600px">
         <AutoRecycle :userObj="userObj" />
       </el-card>
     </el-row>
