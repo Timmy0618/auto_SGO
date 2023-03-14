@@ -137,6 +137,11 @@ class autoBattleChecker {
         return false;
     }
   };
+
+  rest = async () => {
+    ElMessage("開始休息！");
+    this.setProfileInfo(await this.user.rest());
+  };
 }
 
 function getMapIdByName(name) {
