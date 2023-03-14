@@ -335,6 +335,27 @@ function user(inputToken) {
         return error;
       });
   };
+
+  this.recycle = async function (id) {
+    return await axios
+      .post(
+        `${baseurl}/equipment/${id}/recycle`,
+        {},
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let equipments = response.data.equipments;
+        return equipments;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
 }
 
 export default user;

@@ -72,6 +72,7 @@
       <el-card>
         <el-checkbox v-model="showAutoBattle">自動戰鬥</el-checkbox>
         <el-checkbox v-model="showAutoForge">自動鍛造</el-checkbox>
+        <el-checkbox v-model="showAutoRecycle">回收系統</el-checkbox>
       </el-card>
     </el-row>
 
@@ -94,6 +95,12 @@
         />
       </el-card>
     </el-row>
+
+    <el-row style="margin-bottom: 20px" v-if="showAutoRecycle">
+      <el-card>
+        <AutoRecycle :userObj="userObj" />
+      </el-card>
+    </el-row>
   </div>
 </template>
 
@@ -101,6 +108,7 @@
 import { ref, onMounted, defineProps, computed } from "vue";
 import AutoBattle from "../components/AutoBattle.vue";
 import AutoForge from "../components/AutoForge.vue";
+import AutoRecycle from "../components/AutoRecycle.vue";
 import moment from "moment";
 import sleep from "../common/sleep";
 
@@ -114,6 +122,7 @@ const showDetails = ref(false);
 const tokenError = ref(false);
 const showAutoBattle = ref(true);
 const showAutoForge = ref(false);
+const showAutoRecycle = ref(false);
 
 const setProfile = (profileInfo) => {
   profile.value = profileInfo;
