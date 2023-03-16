@@ -11,7 +11,9 @@ class autoBattleChecker {
     setting,
     weaponCheckTag,
     weaponList,
-    selectWeaponList
+    selectWeaponList,
+    medicineCheckTag,
+    medicineSetting
   ) {
     this.profile = profile;
     this.user = user;
@@ -20,6 +22,8 @@ class autoBattleChecker {
     this.weaponCheckTag = weaponCheckTag;
     this.weaponList = weaponList;
     this.selectWeaponList = selectWeaponList;
+    this.medicineCheckTag = medicineCheckTag;
+    this.medicineSetting = medicineSetting;
   }
 
   checkSetting = async () => {
@@ -63,7 +67,8 @@ class autoBattleChecker {
       this.profile.sp <= this.setting.sp
     ) {
       ElMessage("體力血量不夠！");
-      await this.rest();
+      if (this.medicineCheckTag.value) await this.eatMedicine();
+      else await this.rest();
       return false;
     }
     return true;
@@ -141,6 +146,16 @@ class autoBattleChecker {
   rest = async () => {
     ElMessage("開始休息！");
     this.setProfileInfo(await this.user.rest());
+  };
+
+  eatMedicine = async () => {
+    ElMessage("開始吃補品！");
+    let payload = JSON.parse(
+      '{"quantity": ' + this.medicineSetting.medicineQuantity + "}"
+    );
+    this.setProfileInfo(
+      await this.user.eatMedicine(this.medicineSetting.medicineId, payload)
+    );
   };
 }
 

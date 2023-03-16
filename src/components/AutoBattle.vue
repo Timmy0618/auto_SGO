@@ -142,6 +142,39 @@
         </el-col>
       </el-col>
     </el-row>
+
+    <el-divider></el-divider>
+    <el-row>
+      <el-col :span="12">
+        <h3>補品選擇</h3>
+      </el-col>
+      <el-col :span="12" :offset="0">
+        <el-switch
+          v-model="medicineCheckTag"
+          active-text="Open"
+          inactive-text="Close"
+        ></el-switch>
+      </el-col>
+      <el-col :span="8">
+        <el-input
+          v-model="medicineSetting.medicineId"
+          placeholder="補品ID"
+          size="large"
+        >
+          <template #prepend>補品ID</template>
+        </el-input>
+      </el-col>
+      <el-col :span="8">
+        <el-input
+          v-model="medicineSetting.medicineQuantity"
+          placeholder="補品數量"
+          type="number"
+          size="large"
+        >
+          <template #prepend>吃補品數量</template>
+        </el-input>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -176,7 +209,11 @@ let setting = ref({
 const weaponList = ref([]);
 const selectWeaponList = ref([]);
 let weaponCheckTag = true;
-
+let medicineCheckTag = ref(true);
+let medicineSetting = ref({
+  medicineId: "",
+  medicineQuantity: 0,
+});
 const setWeapon = async () => {
   let items = await user.item();
   weaponList.value = items.equipments;
@@ -239,7 +276,9 @@ const handleAutoBattle = async () => {
         setting.value,
         weaponCheckTag,
         weaponList.value,
-        selectWeaponList.value
+        selectWeaponList.value,
+        medicineCheckTag,
+        medicineSetting.value
       );
 
       if (!(await myAutoBattleChecker.checkSetting())) {
