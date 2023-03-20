@@ -12,6 +12,9 @@ class weaponChecker {
     let equipped = await this.getEquippedWeapon();
 
     if (!equipped[0] || equipped[0].durability < this.setting.weaponDuration) {
+      //武器沒壞掉的話脫裝備
+      if (equipped[0] && equipped[0].id) await this.unEquipped(equipped[0].id);
+
       ElMessage("換武器！");
 
       if (!this.weaponList || this.weaponList.length == 0) {
@@ -20,11 +23,8 @@ class weaponChecker {
       }
 
       // 選耐久夠的武器
-      let weaponCanBeSelect = this.weaponList.filter((weapon) => {
-        return (
-          this.selectWeaponList.includes(weapon.id) &&
-          weapon.durability >= this.setting.weaponDuration
-        );
+      let weaponCanBeSelect = this.selectWeaponList.filter((weapon) => {
+        return weapon.durability >= this.setting.weaponDuration;
       });
 
       if (weaponCanBeSelect.length == 0) {
@@ -35,7 +35,7 @@ class weaponChecker {
       await this.wearWeapon(weaponCanBeSelect[0].id);
       ElMessage(`穿上${weaponCanBeSelect[0].name}`);
 
-      this.selectWeaponList = weaponCanBeSelect.map((weapon) => weapon.id);
+      this.selectWeaponList = weaponCanBeSelect;
 
       return true;
     }
@@ -54,6 +54,10 @@ class weaponChecker {
 
   wearWeapon = async (id) => {
     this.weaponList = await this.user.equip(id);
+  };
+
+  unEquipped = async (id) => {
+    this.weaponList = await this.user.unEquip(id);
   };
 }
 export default weaponChecker;
