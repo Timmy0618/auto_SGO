@@ -113,8 +113,9 @@
             <h3>待裝備</h3>
           </div>
           <ul class="card-content">
-            <li v-for="itemId in selectWeaponList" :key="itemId">
-              {{ itemName(itemId) }}
+            <li v-for="(weapon, index) in selectWeaponList" :key="index">
+              {{ weapon.name }}({{ weapon.durability }} /
+              {{ weapon.fullDurability }})
             </li>
           </ul>
         </el-col>
@@ -180,6 +181,22 @@ let weaponCheckTag = true;
 const setWeapon = async () => {
   let items = await user.item();
   weaponList.value = items.equipments;
+
+  updateSelectedWeapon(weaponList.value);
+};
+
+const updateSelectedWeapon = (weaponList) => {
+  selectWeaponList.value = selectWeaponList.value.filter((selectedObject) => {
+    let matchingObject = weaponList.find(
+      (object) => object.id === selectedObject.id
+    );
+    if (
+      matchingObject &&
+      selectedObject.durability > setting.value.weaponDuration
+    ) {
+      return matchingObject;
+    }
+  });
 };
 
 const equippedWeapon = computed(() => {
@@ -190,12 +207,6 @@ const equippedWeapon = computed(() => {
       return { id, name, durability, fullDurability };
     });
 });
-
-const itemName = (itemId) => {
-  let weapon = weaponList.value.find((weapon) => weapon.id === itemId);
-
-  return weapon.name ?? itemId;
-};
 
 const selectWeapons = (weapons) => {
   selectWeaponList.value = weapons;

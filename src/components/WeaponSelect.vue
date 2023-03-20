@@ -62,12 +62,7 @@ const checkedWeapons = ref([]);
 
 const emits = defineEmits(["select-weapon", "un-equip-all", "weapon-check"]);
 const confirm = async () => {
-  emits(
-    "select-weapon",
-    checkedWeapons.value.map((weapon) => {
-      return weapon.id;
-    })
-  );
+  emits("select-weapon", checkedWeapons.value);
   checkedWeapons.value = [];
 };
 
