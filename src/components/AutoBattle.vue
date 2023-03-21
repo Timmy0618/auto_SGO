@@ -147,7 +147,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, defineProps, defineEmits, computed } from "vue";
+import { ref, onMounted, defineProps, defineEmits, computed, watch } from "vue";
 import map from "../common/mapping";
 import { ElMessage } from "element-plus";
 import WeaponSelect from "./WeaponSelect.vue";
@@ -181,22 +181,33 @@ let weaponCheckTag = true;
 const setWeapon = async () => {
   let items = await user.item();
   weaponList.value = items.equipments;
-
-  updateSelectedWeapon(weaponList.value);
 };
 
-const updateSelectedWeapon = (weaponList) => {
-  selectWeaponList.value = selectWeaponList.value.filter((selectedObject) => {
-    let matchingObject = weaponList.find(
+watch(
+  () => weaponList.value,
+  () => {
+    updateSelectedWeapon();
+  }
+);
+
+const updateSelectedWeapon = async () => {
+  let temp = [];
+
+  selectWeaponList.value.filter((selectedObject) => {
+    let matchingObject = weaponList.value.find(
       (object) => object.id === selectedObject.id
     );
+
     if (
       matchingObject &&
       selectedObject.durability > setting.value.weaponDuration
     ) {
+      temp.push(matchingObject);
+
       return matchingObject;
     }
   });
+  selectWeaponList.value = temp;
 };
 
 const equippedWeapon = computed(() => {
