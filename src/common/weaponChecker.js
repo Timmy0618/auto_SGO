@@ -1,5 +1,5 @@
 import { ElMessage } from "element-plus";
-
+import typeList from "./typeList";
 class weaponChecker {
   constructor(setting, weaponList, selectWeaponList, user) {
     this.setting = setting;

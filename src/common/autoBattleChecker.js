@@ -10,44 +10,30 @@ class autoBattleChecker {
     setProfileInfo,
     setting,
     weaponCheckTag,
-    weaponList,
-    selectWeaponList
+    myWeaponChecker,
+    medicineCheckTag,
+    medicineSetting
   ) {
     this.profile = profile;
     this.user = user;
     this.setProfileInfo = setProfileInfo;
     this.setting = setting;
     this.weaponCheckTag = weaponCheckTag;
-    this.weaponList = weaponList;
-    this.selectWeaponList = selectWeaponList;
+    this.myWeaponChecker = myWeaponChecker;
   }
 
   checkSetting = async () => {
     try {
       console.log("checkSetting");
-      return await this.checkHpSp()
-        .then((isHpSpValid) => {
-          if (isHpSpValid) return this.checkMap();
-          else return false;
-        })
-        .then((isMapValid) => {
-          if (isMapValid) {
-            if (!this.weaponCheckTag) return true;
-            else
-              return new weaponChecker(
-                this.setting,
-                this.weaponList,
-                this.selectWeaponList,
-                this.user
-              ).checkWeapon();
-          } else return false;
-        })
-        .catch((error) => {
-          console.error(error);
-          throw error;
-        });
+      if (!(await this.checkHpSp())) return false;
+      if (!(await this.checkMap())) return false;
+      if (!this.weaponCheckTag) return true;
+      if (!(await this.myWeaponChecker.checkWeapon())) return false;
+
+      return true;
     } catch (error) {
-      alert(error);
+      console.log(error);
+      return false;
     }
   };
 

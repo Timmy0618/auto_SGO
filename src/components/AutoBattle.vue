@@ -154,6 +154,7 @@ import WeaponSelect from "./WeaponSelect.vue";
 import sleep from "../common/sleep";
 import statusChecker from "../common/statusChecker";
 import autoBattleChecker from "../common/autoBattleChecker";
+import weaponChecker from "../common/weaponChecker";
 
 const props = defineProps({
   userObj: Object,
@@ -254,14 +255,20 @@ const handleAutoBattle = async () => {
     );
 
     if (await myStatusChecker.checkStatus()) {
+      const myWeaponChecker = new weaponChecker(
+        setting.value,
+        weaponList.value,
+        selectWeaponList.value,
+        user
+      );
+
       const myAutoBattleChecker = new autoBattleChecker(
         props.profile,
         user,
         setProfileInfo,
         setting.value,
         weaponCheckTag,
-        weaponList.value,
-        selectWeaponList.value
+        myWeaponChecker
       );
 
       if (!(await myAutoBattleChecker.checkSetting())) {
