@@ -11,6 +11,9 @@ const map = [
   { name: "青藏高原", id: 8 },
   { name: "火鳳燎原", id: 9 },
   { name: "骷髏墓園", id: 10 },
+  { name: "鷹洞", id: 11 },
+  { name: "蝙蝠洞", id: 12 },
+  { name: "老鼠洞", id: 13 },
 ];
 
 export default map;
