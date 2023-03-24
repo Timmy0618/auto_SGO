@@ -356,6 +356,44 @@ function user(inputToken) {
         return error;
       });
   };
+
+  this.skills = async function () {
+    return await axios
+      .get(`${baseurl}/skills`, {
+        headers: {
+          token: this.token,
+        },
+      })
+      .then((response) => {
+        let skills = response.data;
+        return skills;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  this.skillEnable = async function (skillId, isEnable) {
+    return await axios
+      .post(
+        `${baseurl}/skills/${skillId}/enable`,
+        { enabled: isEnable },
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let equipments = response.data.equipments;
+        return equipments;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  };
 }
 
 export default user;

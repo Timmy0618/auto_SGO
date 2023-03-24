@@ -123,6 +123,7 @@
     </el-card>
 
     <el-divider></el-divider>
+
     <el-row>
       <WeaponSelect
         :input-weapons="weaponList"
@@ -132,6 +133,16 @@
         @select-weapon="selectWeapons"
       />
     </el-row>
+    <el-divider></el-divider>
+
+    <el-row>
+      <SkillSelect
+        :userObj="userObj"
+        @select-skill="selectSkill"
+        :skills="skills"
+      />
+    </el-row>
+    <el-divider></el-divider>
 
     <el-row>
       <el-col :span="24">
@@ -153,10 +164,12 @@ import { ref, onMounted, defineProps, defineEmits, computed, watch } from "vue";
 import map from "../common/mapping";
 import { ElMessage } from "element-plus";
 import WeaponSelect from "./WeaponSelect.vue";
+import SkillSelect from "./SkillSelect.vue";
 import sleep from "../common/sleep";
 import statusChecker from "../common/statusChecker";
 import autoBattleChecker from "../common/autoBattleChecker";
 import weaponChecker from "../common/weaponChecker";
+import skillChecker from "../common/skillChecker";
 
 const props = defineProps({
   userObj: Object,
@@ -180,8 +193,14 @@ let setting = ref({
 const weaponList = ref([]);
 const selectWeaponList = ref([]);
 let equipmentCheckTag = true;
+const selectSkillList = ref([]);
+const skills = ref([]);
 let weaponCheckTag = true;
 let armorCheckTag = false;
+
+const selectSkill = (skills) => {
+  selectSkillList.value = skills;
+};
 
 const setWeapon = async () => {
   let items = await user.item();
@@ -288,6 +307,7 @@ const handleAutoBattle = async () => {
       if (!(await myAutoBattleChecker.checkSetting())) {
         console.log("waiting");
       } else {
+        await checkSkill();
         if (props.profile.huntStage < setting.value.runLevel) {
           await run();
         } else {
@@ -301,6 +321,24 @@ const handleAutoBattle = async () => {
     await sleep(11000);
     scriptDone.value = true;
   }
+};
+
+const checkSkill = async () => {
+  console.log("checkSkill");
+  if (selectSkillList.value.length == 0) return;
+
+  const mySkillChecker = new skillChecker(user);
+  if (props.profile.huntStage < setting.value.runLevel) {
+    await mySkillChecker.disableSkill(skills.value, selectSkillList.value);
+  }
+
+  if (props.profile.huntStage >= setting.value.runLevel) {
+    await mySkillChecker.enableSkill(skills.value, selectSkillList.value);
+  }
+};
+
+const getSkillList = async () => {
+  skills.value = await user.skills();
 };
 
 const handleStop = async () => {
@@ -336,6 +374,7 @@ const battle = async () => {
 onMounted(async () => {
   user = props.userObj;
   setWeapon();
+  getSkillList();
 });
 </script>
 
