@@ -1,7 +1,6 @@
 import map from "../common/mapping";
 import specialMap from "../common/specialMap";
 import { ElMessage } from "element-plus";
-import weaponChecker from "./weaponChecker";
 
 class autoBattleChecker {
   constructor(
@@ -10,9 +9,7 @@ class autoBattleChecker {
     setProfileInfo,
     setting,
     weaponCheckTag,
-    myWeaponChecker,
-    medicineCheckTag,
-    medicineSetting
+    myWeaponChecker
   ) {
     this.profile = profile;
     this.user = user;
@@ -28,7 +25,7 @@ class autoBattleChecker {
       if (!(await this.checkHpSp())) return false;
       if (!(await this.checkMap())) return false;
       if (!this.weaponCheckTag) return true;
-      if (!(await this.myWeaponChecker.checkWeapon())) return false;
+      if (!(await this.myWeaponChecker.checkEquipment())) return false;
 
       return true;
     } catch (error) {
@@ -109,6 +106,10 @@ class autoBattleChecker {
             this.setProfileInfo(profile);
             ElMessage("進入秘境！");
             return true;
+          } else if (Number(this.profile.huntStage) > 16) {
+            ElMessage("層數超過！");
+            this.setProfileInfo(await this.user.move(0));
+            ElMessage("回城！");
           }
           return true;
         } else {

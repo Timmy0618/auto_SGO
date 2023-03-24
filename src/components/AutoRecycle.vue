@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
-import { ref, defineProps, defineEmits, onMounted, watch, computed } from "vue";
+import { ref, defineProps, onMounted } from "vue";
 import sleep from "../common/sleep";
 const durability = ref(0);
 const weapon = ref([]);

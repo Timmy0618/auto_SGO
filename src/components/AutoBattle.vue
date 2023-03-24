@@ -126,7 +126,9 @@
     <el-row>
       <WeaponSelect
         :input-weapons="weaponList"
-        @weapon-check="weaponCheck"
+        @equipment-check="equipmentCheck"
+        @update-check-weapon="checkWeapon"
+        @update-check-armor="checkArmor"
         @select-weapon="selectWeapons"
       />
     </el-row>
@@ -177,7 +179,9 @@ let setting = ref({
 });
 const weaponList = ref([]);
 const selectWeaponList = ref([]);
+let equipmentCheckTag = true;
 let weaponCheckTag = true;
+let armorCheckTag = false;
 
 const setWeapon = async () => {
   let items = await user.item();
@@ -224,8 +228,15 @@ const selectWeapons = (weapons) => {
   selectWeaponList.value = weapons;
 };
 
-const weaponCheck = () => {
+const equipmentCheck = () => {
+  equipmentCheckTag = !equipmentCheckTag;
+};
+
+const checkWeapon = () => {
   weaponCheckTag = !weaponCheckTag;
+};
+const checkArmor = () => {
+  armorCheckTag = !armorCheckTag;
 };
 
 const showContent = ref(false);
@@ -259,6 +270,9 @@ const handleAutoBattle = async () => {
         setting.value,
         weaponList.value,
         selectWeaponList.value,
+        selectWeapons,
+        weaponCheckTag,
+        armorCheckTag,
         user
       );
 
@@ -267,7 +281,7 @@ const handleAutoBattle = async () => {
         user,
         setProfileInfo,
         setting.value,
-        weaponCheckTag,
+        equipmentCheckTag,
         myWeaponChecker
       );
 
