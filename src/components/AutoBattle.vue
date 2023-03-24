@@ -295,6 +295,7 @@ const handleAutoBattle = async () => {
         }
         count.value += 1;
       }
+      setWeapon();
     }
 
     await sleep(11000);
@@ -322,7 +323,6 @@ const run = async () => {
   ElMessage("趕路");
   let data = await user.run();
   setProfileInfo(data.profile);
-  setWeapon();
   battleInfo.value = data.messages;
 };
 
@@ -330,7 +330,6 @@ const battle = async () => {
   ElMessage("戰鬥");
   let data = await user.battle();
   setProfileInfo(data.profile);
-  setWeapon();
   battleInfo.value = data.messages;
 };
 
