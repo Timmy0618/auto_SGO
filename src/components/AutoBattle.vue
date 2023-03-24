@@ -126,7 +126,9 @@
     <el-row>
       <WeaponSelect
         :input-weapons="weaponList"
-        @weapon-check="weaponCheck"
+        @equipment-check="equipmentCheck"
+        @update-check-weapon="checkWeapon"
+        @update-check-armor="checkArmor"
         @select-weapon="selectWeapons"
       />
     </el-row>
@@ -154,6 +156,7 @@ import WeaponSelect from "./WeaponSelect.vue";
 import sleep from "../common/sleep";
 import statusChecker from "../common/statusChecker";
 import autoBattleChecker from "../common/autoBattleChecker";
+import weaponChecker from "../common/weaponChecker";
 
 const props = defineProps({
   userObj: Object,
@@ -176,7 +179,9 @@ let setting = ref({
 });
 const weaponList = ref([]);
 const selectWeaponList = ref([]);
+let equipmentCheckTag = true;
 let weaponCheckTag = true;
+let armorCheckTag = false;
 
 const setWeapon = async () => {
   let items = await user.item();
@@ -223,8 +228,15 @@ const selectWeapons = (weapons) => {
   selectWeaponList.value = weapons;
 };
 
-const weaponCheck = () => {
+const equipmentCheck = () => {
+  equipmentCheckTag = !equipmentCheckTag;
+};
+
+const checkWeapon = () => {
   weaponCheckTag = !weaponCheckTag;
+};
+const checkArmor = () => {
+  armorCheckTag = !armorCheckTag;
 };
 
 const showContent = ref(false);
@@ -254,14 +266,23 @@ const handleAutoBattle = async () => {
     );
 
     if (await myStatusChecker.checkStatus()) {
+      const myWeaponChecker = new weaponChecker(
+        setting.value,
+        weaponList.value,
+        selectWeaponList.value,
+        selectWeapons,
+        weaponCheckTag,
+        armorCheckTag,
+        user
+      );
+
       const myAutoBattleChecker = new autoBattleChecker(
         props.profile,
         user,
         setProfileInfo,
         setting.value,
-        weaponCheckTag,
-        weaponList.value,
-        selectWeaponList.value
+        equipmentCheckTag,
+        myWeaponChecker
       );
 
       if (!(await myAutoBattleChecker.checkSetting())) {

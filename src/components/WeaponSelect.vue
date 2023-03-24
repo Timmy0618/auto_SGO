@@ -1,16 +1,30 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="12">
-        <h3>武器選擇</h3>
+      <el-col>
+        <h3>裝備選擇</h3>
       </el-col>
+    </el-row>
+
+    <el-row :gutter="20">
       <el-col :span="12" :offset="0">
         <el-switch
-          v-model="weaponCheck"
-          @change="handleWeaponCheck"
+          v-model="equipmentCheck"
+          @change="handleEquipmentCheck"
           active-text="Open"
           inactive-text="Close"
-          >{{ weaponCheck ? "已啟用" : "已關閉" }}</el-switch
+          >{{ equipmentCheck ? "已啟用" : "已關閉" }}</el-switch
+        >
+      </el-col>
+      <el-col :span="6">
+        <el-checkbox v-model="checkWeapon" @change="updateCheckWeapon()"
+          >武器檢查</el-checkbox
+        >
+      </el-col>
+
+      <el-col :span="6">
+        <el-checkbox v-model="checkArmor" @change="updateCheckArmor()"
+          >防具檢查</el-checkbox
         >
       </el-col>
     </el-row>
@@ -57,17 +71,33 @@ const props = defineProps({
 
 const isCollapse = ref(true);
 const searchText = ref("");
-const weaponCheck = ref(true);
+const equipmentCheck = ref(true);
 const checkedWeapons = ref([]);
+const checkWeapon = ref(true);
+const checkArmor = ref(false);
 
-const emits = defineEmits(["select-weapon", "un-equip-all", "weapon-check"]);
+const emits = defineEmits([
+  "select-weapon",
+  "un-equip-all",
+  "equipment-check",
+  "update-check-weapon",
+  "update-check-armor",
+]);
 const confirm = async () => {
   emits("select-weapon", checkedWeapons.value);
   checkedWeapons.value = [];
 };
 
-const handleWeaponCheck = () => {
-  emits("weapon-check");
+const updateCheckWeapon = () => {
+  emits("update-check-weapon");
+};
+
+const updateCheckArmor = () => {
+  emits("update-check-armor");
+};
+
+const handleEquipmentCheck = () => {
+  emits("equipment-check");
 };
 
 const filteredWeapons = computed(() => {
