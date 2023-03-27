@@ -96,6 +96,77 @@
       </el-col>
     </el-row>
 
+    <el-row style="margin-bottom: 5px" :gutter="20">
+      <el-col :span="4">
+        <h3>補品選擇</h3>
+      </el-col>
+      <el-col :span="12" :offset="0">
+        <el-switch
+          v-model="medicineCheckTag"
+          active-text="Open"
+          inactive-text="Close"
+        ></el-switch>
+      </el-col>
+    </el-row>
+
+    <el-row style="margin-bottom: 20px" :gutter="20">
+      <el-col :span="8">
+        <el-select
+          v-model="medicineSetting.medicineHpId"
+          class="m-2"
+          placeholder="Hp"
+          size="large"
+        >
+          <el-option
+            v-for="(item, index) in medicine"
+            :key="index"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-col>
+      <el-col :span="8">
+        <el-input
+          v-model="medicineSetting.medicineHpQuantity"
+          placeholder="補品數量"
+          type="number"
+          size="large"
+        >
+          <template #prepend>吃補品數量</template>
+        </el-input>
+      </el-col>
+    </el-row>
+
+    <el-row style="margin-bottom: 20px" :gutter="20">
+      <el-col :span="8">
+        <el-select
+          v-model="medicineSetting.medicineSpId"
+          class="m-2"
+          placeholder="Sp"
+          size="large"
+        >
+          <el-option
+            v-for="(item, index) in medicine"
+            :key="index"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-col>
+      <el-col :span="8">
+        <el-input
+          v-model="medicineSetting.medicineSpQuantity"
+          placeholder="補品數量"
+          type="number"
+          size="large"
+        >
+          <template #prepend>吃補品數量</template>
+        </el-input>
+      </el-col>
+    </el-row>
+
+    <el-divider></el-divider>
+
     <el-card>
       <el-row>
         <el-col :span="12">
@@ -157,6 +228,7 @@ import sleep from "../common/sleep";
 import statusChecker from "../common/statusChecker";
 import autoBattleChecker from "../common/autoBattleChecker";
 import weaponChecker from "../common/weaponChecker";
+import medicineList from "../common/medicineList";
 
 const props = defineProps({
   userObj: Object,
@@ -182,10 +254,18 @@ const selectWeaponList = ref([]);
 let equipmentCheckTag = true;
 let weaponCheckTag = true;
 let armorCheckTag = false;
+let medicineCheckTag = ref(true);
+let medicineSetting = ref({
+  medicineHpId: "",
+  medicineSpId: "",
+  medicineHpQuantity: 0,
+  medicineSpQuantity: 0,
+});
+const items = ref({});
 
 const setWeapon = async () => {
-  let items = await user.item();
-  weaponList.value = items.equipments;
+  items.value = await user.item();
+  weaponList.value = items.value.equipments;
 };
 
 watch(
@@ -251,9 +331,9 @@ const setProfileInfo = async (profileInfo) => {
 };
 
 const handleAutoBattle = async () => {
-  if (!(await checkRunLevel())) {
-    return;
-  }
+  if (!(await checkMedicine())) return;
+
+  if (!(await checkRunLevel())) return;
 
   scriptStatus.value = true;
   while (scriptStatus.value) {
@@ -282,7 +362,9 @@ const handleAutoBattle = async () => {
         setProfileInfo,
         setting.value,
         equipmentCheckTag,
-        myWeaponChecker
+        myWeaponChecker,
+        medicineCheckTag,
+        medicineSetting.value
       );
 
       if (!(await myAutoBattleChecker.checkSetting())) {
@@ -319,6 +401,20 @@ const checkRunLevel = async () => {
   return true;
 };
 
+const checkMedicine = async () => {
+  if (!medicineCheckTag.value) return true;
+
+  if (
+    !medicineSetting.value.medicineHpId ||
+    !medicineSetting.value.medicineSpId
+  ) {
+    ElMessage("沒選補品");
+    return false;
+  }
+
+  return true;
+};
+
 const run = async () => {
   ElMessage("趕路");
   let data = await user.run();
@@ -333,9 +429,35 @@ const battle = async () => {
   battleInfo.value = data.messages;
 };
 
+const medicine = computed(() => {
+  let result = [];
+  if (!items.value.consumables) return result;
+
+  for (let index = 0; index < medicineList.length; index++) {
+    const itemName = medicineList[index];
+    for (let index = 0; index < items.value.consumables.length; index++) {
+      const item = items.value.consumables[index];
+      if (item.name == itemName)
+        result.push({
+          name: `${itemName} (${item.quantity})`,
+          id: item.id,
+        });
+    }
+  }
+
+  return result;
+});
+
+watch(
+  () => items.value,
+  () => {
+    medicine.value;
+  }
+);
+
 onMounted(async () => {
   user = props.userObj;
-  setWeapon();
+  await setWeapon();
 });
 </script>
 
