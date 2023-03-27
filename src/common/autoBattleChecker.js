@@ -26,6 +26,7 @@ class autoBattleChecker {
   checkSetting = async () => {
     try {
       console.log("checkSetting");
+      if (!(await this.checkDeath())) return false;
       if (this.medicineCheckTag.value) {
         if (!(await this.checkMedicine())) return false;
       }
@@ -41,13 +42,17 @@ class autoBattleChecker {
     }
   };
 
-  checkHpSp = async () => {
+  checkDeath = async () => {
     if (this.profile.hp <= 0) {
       ElMessage("你死了廢物！");
       await this.revive();
       return false;
     }
 
+    return true;
+  };
+
+  checkHpSp = async () => {
     if (
       this.profile.hp <= this.setting.hp ||
       this.profile.sp <= this.setting.sp
