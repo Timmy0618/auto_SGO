@@ -9,7 +9,9 @@ class autoBattleChecker {
     setProfileInfo,
     setting,
     weaponCheckTag,
-    myWeaponChecker
+    myWeaponChecker,
+    medicineCheckTag,
+    medicineSetting
   ) {
     this.profile = profile;
     this.user = user;
@@ -17,11 +19,16 @@ class autoBattleChecker {
     this.setting = setting;
     this.weaponCheckTag = weaponCheckTag;
     this.myWeaponChecker = myWeaponChecker;
+    this.medicineCheckTag = medicineCheckTag;
+    this.medicineSetting = medicineSetting;
   }
 
   checkSetting = async () => {
     try {
       console.log("checkSetting");
+      if (this.medicineCheckTag.value) {
+        if (!(await this.checkMedicine())) return false;
+      }
       if (!(await this.checkHpSp())) return false;
       if (!(await this.checkMap())) return false;
       if (!this.weaponCheckTag) return true;
@@ -49,6 +56,30 @@ class autoBattleChecker {
       await this.rest();
       return false;
     }
+    return true;
+  };
+
+  checkMedicine = async () => {
+    while (this.profile.hp <= this.setting.hp) {
+      if (
+        !(await this.eatMedicine(
+          this.medicineSetting.medicineHpId,
+          this.medicineSetting.medicineHpQuantity
+        ))
+      )
+        return false;
+    }
+
+    while (this.profile.sp <= this.setting.sp) {
+      if (
+        !(await this.eatMedicine(
+          this.medicineSetting.medicineSpId,
+          this.medicineSetting.medicineSpQuantity
+        ))
+      )
+        return false;
+    }
+
     return true;
   };
 
@@ -128,6 +159,23 @@ class autoBattleChecker {
   rest = async () => {
     ElMessage("開始休息！");
     this.setProfileInfo(await this.user.rest());
+  };
+
+  eatMedicine = async (medicineId, medicineQuantity) => {
+    if (!medicineId) {
+      ElMessage("沒補品！");
+      return false;
+    }
+    ElMessage("開始吃補品！");
+    let { profile: profile, items: items } = await this.user.eatMedicine(
+      medicineId,
+      medicineQuantity
+    );
+    if (!profile) return false;
+    this.setProfileInfo(profile);
+    this.profile = profile;
+
+    return true;
   };
 }
 

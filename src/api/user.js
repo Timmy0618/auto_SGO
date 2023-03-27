@@ -356,6 +356,28 @@ function user(inputToken) {
         return error;
       });
   };
+
+  // input {quantity: }
+  this.eatMedicine = async function (id, quantity) {
+    return await axios
+      .post(
+        `${baseurl}/items/${id}/use`,
+        { quantity: quantity },
+        {
+          headers: {
+            token: this.token,
+          },
+        }
+      )
+      .then((response) => {
+        let data = response.data;
+        return data;
+      })
+      .catch((error) => {
+        console.log(error);
+        return false;
+      });
+  };
 }
 
 export default user;
