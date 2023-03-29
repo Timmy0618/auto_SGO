@@ -448,6 +448,34 @@ const medicine = computed(() => {
   return result;
 });
 
+const readSetting = async () => {
+  let token = user.token;
+  let userSetting =
+    (await JSON.parse(localStorage.getItem(`setting_${token}`))) || {};
+
+  if (Object.keys(userSetting).length == 0) return;
+
+  setting.value = userSetting.setting;
+  medicineSetting.value = userSetting.medicineSetting;
+};
+
+const writeSetting = async () => {
+  let token = user.token;
+  const userSetting = {
+    setting: setting.value,
+    medicineSetting: medicineSetting.value,
+  };
+  localStorage.setItem(`setting_${token}`, JSON.stringify(userSetting));
+};
+
+watch(
+  () => [setting.value, medicineSetting.value],
+  () => {
+    writeSetting();
+  },
+  { deep: true }
+);
+
 watch(
   () => items.value,
   () => {
@@ -458,6 +486,7 @@ watch(
 onMounted(async () => {
   user = props.userObj;
   await setWeapon();
+  await readSetting();
 });
 </script>
 
