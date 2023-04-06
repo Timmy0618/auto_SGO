@@ -3,6 +3,7 @@ const map = [
   { name: "大草原", id: 1 },
   { name: "草原秘徑", id: 1001 },
   { name: "猛牛原", id: 2 },
+  { name: "被詛咒的寺院", id: 2001 },
   { name: "兒童樂園", id: 3 },
   { name: "蘑菇園", id: 4 },
   { name: "圓明園", id: 5 },

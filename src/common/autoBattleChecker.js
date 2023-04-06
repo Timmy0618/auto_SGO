@@ -156,6 +156,30 @@ class autoBattleChecker {
           return false;
         }
 
+      case "被詛咒的寺院":
+        //還沒到秘境
+        if (this.profile.zoneName == "猛牛原") {
+          if (Number(this.profile.huntStage) == 18) {
+            let profile = await this.user.path(
+              getMapIdByName(this.setting.map)
+            );
+            this.setProfileInfo(profile);
+            ElMessage("進入秘境！");
+            return true;
+          } else if (Number(this.profile.huntStage) > 18) {
+            ElMessage("層數超過！");
+            this.setProfileInfo(await this.user.move(0));
+            ElMessage("回城！");
+          }
+          return true;
+        } else {
+          ElMessage("地圖不對！");
+          this.setProfileInfo(await this.user.move(getMapIdByName("猛牛原")));
+          ElMessage("移動！");
+
+          return false;
+        }
+
       default:
         return false;
     }
